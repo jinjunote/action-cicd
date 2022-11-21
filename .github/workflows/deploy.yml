@@ -1,0 +1,31 @@
+name: Deploy to AKS jinju96
+
+env:
+  AZURE_CONTAINER_REGISTRY: pearlregistry.azurecr.io  # set this to the name of your container registry
+  PROJECT_NAME: pearlregistry # set this to your project's name
+  RESOURCE_GROUP: mtp-k8s # set this to the resource group containing your AKS cluster
+  CLUSTER_NAME: aks-agentpool-26139183-vmss000005 # set this to the name of your AKS cluster
+
+on:
+  workflow_dispatch:
+    inputs:
+      VERSION:
+        required: false
+        default: "1.0"
+        type: string
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Git Tls Check False
+        run: |
+          git config --global http.sslVerify false
+      - uses: actions/checkout@v3
+
+      - name: download files
+        run: |
+          pwd
+          ls -al
+          kubectl apply -f yaml/ns.yml
+          kubectl apply -f yaml/jeus-deployment.yml -n tmax
